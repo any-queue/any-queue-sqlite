@@ -1,0 +1,27 @@
+{
+  "name": "any-queue-mysql",
+  "version": "1.0.0",
+  "description": "MySQL persistence interface for any-queue",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test.js"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Gerardo Munguia",
+    "email": "<gerardomunguiahoyo@gmail.com>",
+    "url": "gmunguia.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^4.16.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-prettier": "^2.5.0",
+    "mocha": "^5.0.0",
+    "prettier": "1.10.2"
+  },
+  "dependencies": {
+    "mysql": "^2.15.0"
+  },
+  "repository": "gmunguia/any-queue-mysql"
+}
