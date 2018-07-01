@@ -1,75 +1,15 @@
 const mysql = require("mysql");
 const { promisify } = require("util");
 
-module.exports = ({
-  host,
-  rootUser,
-  rootPassword,
-  user,
-  password,
-  database
-}) => {
+module.exports = ({ host, database, user, password }) => {
   const globals = {};
-
-  const initialize = function initialize() {
-    const connection = mysql.createConnection({
-      host: host,
-      user: rootUser,
-      password: rootPassword
-    });
-
-    return promisify(connection.connect.bind(connection))()
-      .then(() => promisify(connection.query.bind(connection)))
-      .then(query =>
-        query(`DROP DATABASE IF EXISTS ${database}`)
-          .then(query(`CREATE DATABASE ${database}`))
-          .then(() =>
-            query(`CREATE USER IF NOT EXISTS '${user}'@'${host}'`)
-          )
-          .then(() =>
-            query(
-              `GRANT ALL ON ${database}.* To '${user}'@'${
-                host
-              }' IDENTIFIED BY '${password}';`
-            )
-          )
-          .then(() => query("FLUSH PRIVILEGES"))
-          .then(() => query(`USE ${database}`))
-          .then(() =>
-            query(`CREATE TABLE jobs(
-          _id int not null primary key auto_increment,
-          queue varchar(255) not null,
-          data json not null,
-          priority int not null,
-          status enum ('new', 'blocked', 'done', 'failed') not null,
-          error varchar(1000)
-        )`)
-          )
-          .then(() =>
-            query(`CREATE TABLE locks(
-          _id int not null primary key auto_increment,
-          queue varchar(255) not null,
-          worker char(36),
-          blocker char(36),
-          job int not null,
-          status enum ('locking', 'locked', 'backed-off'),
-
-          FOREIGN KEY fk_job(job)
-          REFERENCES jobs(_id)
-          ON UPDATE CASCADE
-          ON DELETE CASCADE
-        )`)
-          )
-      )
-      .then(promisify(connection.end.bind(connection)));
-  };
 
   const connect = function connect() {
     const connection = mysql.createConnection({
-      host: host,
-      user: user,
-      password: password,
-      database: database
+      host,
+      user,
+      password,
+      database
     });
 
     return promisify(connection.connect.bind(connection))()
@@ -152,7 +92,30 @@ module.exports = ({
         globals.connection = connection;
         globals.query = query;
 
-        return environment;
+        return query(`CREATE TABLE IF NOT EXISTS jobs(
+              _id int not null primary key auto_increment,
+              queue varchar(255) not null,
+              data json not null,
+              priority int not null,
+              status enum ('new', 'blocked', 'done', 'failed') not null,
+              error varchar(1000)
+            )`)
+          .then(() =>
+            query(`CREATE TABLE IF NOT EXISTS locks(
+              _id int not null primary key auto_increment,
+              queue varchar(255) not null,
+              worker char(36),
+              blocker char(36),
+              job int not null,
+              status enum ('locking', 'locked', 'backed-off'),
+
+              FOREIGN KEY fk_job(job)
+              REFERENCES jobs(_id)
+              ON UPDATE CASCADE
+              ON DELETE CASCADE
+            )`)
+          )
+          .then(() => environment);
       });
   };
 
@@ -165,5 +128,5 @@ module.exports = ({
     return promisify(connection.end.bind(connection))();
   };
 
-  return { initialize, connect, refresh, disconnect };
+  return { connect, refresh, disconnect };
 };

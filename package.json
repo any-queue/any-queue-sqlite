@@ -21,6 +21,7 @@
     "prettier": "1.10.2"
   },
   "dependencies": {
+    "inquirer": "^6.0.0",
     "mysql": "^2.15.0"
   },
   "repository": "gmunguia/any-queue-mysql"
