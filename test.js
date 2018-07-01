@@ -1,13 +1,15 @@
 "use strict";
+const testIntegration = require("any-queue-test");
+const mysqlConnector = require(".");
 
-const testIntegration = require("../any-queue-test/index.js");
-const { connect, initialize, refresh, disconnect } = require(".")({
-  host: "localhost",
-  rootUser: "root",
-  rootPassword: "admin",
-  user: "any_queue_test_user",
-  password: "any_queue_test_password",
-  database: "any_queue_test"
+process.on("unhandledRejection", err => {
+  throw err;
 });
 
-testIntegration({ name: "mysql", connect, initialize, refresh, disconnect });
+testIntegration({
+  name: "mysql",
+  createPersistenceInterface: () =>
+    mysqlConnector({
+      uri: "mysql://root:admin@localhost/any-queue"
+    })
+});
