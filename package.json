@@ -1,10 +1,10 @@
 {
-  "name": "any-queue-mysql",
+  "name": "any-queue-sqlite",
   "version": "1.0.0",
-  "description": "MySQL persistence interface for any-queue",
+  "description": "SQLite persistence interface for any-queue",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test.js"
+    "test": "mkdir -p .tmp && mocha test.js"
   },
   "keywords": [],
   "author": {
@@ -21,8 +21,8 @@
     "prettier": "1.10.2"
   },
   "dependencies": {
-    "mysql2": "^1.5.3",
-    "sequelize": "^4.38.0"
+    "sequelize": "^4.38.0",
+    "sqlite3": "^4.0.1"
   },
-  "repository": "any-queue/any-queue-mongodb"
+  "repository": "any-queue/any-queue-sqlite"
 }

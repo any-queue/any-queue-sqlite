@@ -1,15 +1,15 @@
 "use strict";
 const testIntegration = require("any-queue-test");
-const mysqlConnector = require(".");
+const sqliteConnector = require(".");
 
 process.on("unhandledRejection", err => {
   throw err;
 });
 
 testIntegration({
-  name: "mysql",
+  name: "sqlite",
   createPersistenceInterface: () =>
-    mysqlConnector({
-      uri: "mysql://root:admin@localhost/any-queue"
+    sqliteConnector({
+      uri: "sqlite://localhost/any-queue"
     })
 });

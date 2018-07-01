@@ -9,19 +9,17 @@ module.exports = ({ uri, config }) => {
   let connectionCount = 0;
   let connecting;
   let connected = false;
-  const log = debug("anyqueue:mysql:");
+  const log = debug("anyqueue:sqlite:");
 
   const connect = function connect() {
     log("connecting");
-    // TBD should we reuse connection?
+
     ++connectionCount;
     if (connecting) return connecting;
 
     log("creating new connection");
 
     sequelize = new Sequelize(uri, {
-      // TODO: configure connection pool
-
       // Only used in sqlite connections.
       storage: "./.tmp/database.sqlite",
 
